@@ -14,6 +14,11 @@
  *Display the shell prompt.
  */
 void display_prompt(void);
+void display_prompt(void);
+ssize_t read_user_input(char **input);
+void handle_command(const char *command);
+void handle_error(const char *message);
+void remove_newline(char *str);
 
 /**
  *Read a command from the user.
