@@ -18,6 +18,10 @@ void display_prompt(void);
 ssize_t read_user_input(char **input);
 void handle_command(const char *command);
 void handle_error(const char *message);
+void remove_newline(char *str);void display_prompt(void);
+ssize_t read_user_input(char **input);
+void handle_command(const char *command);
+void handle_error(const char *message);
 void remove_newline(char *str);
 
 /**
