@@ -23,6 +23,8 @@ ssize_t read_user_input(char **input);
 void handle_command(const char *command);
 void handle_error(const char *message);
 void remove_newline(char *str);
+int resolve_command(const char *command, char **resolved_path, char **envp);
+
 
 /**
  *Read a command from the user.
