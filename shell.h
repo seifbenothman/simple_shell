@@ -24,6 +24,8 @@ void handle_command(const char *command);
 void handle_error(const char *message);
 void remove_newline(char *str);
 int resolve_command(const char *command, char **resolved_path, char **envp);
+int resolve_command(const char *command, char **resolved_path);
+int exit_shell(info_t *info);
 
 
 /**
