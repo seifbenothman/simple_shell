@@ -10,33 +10,44 @@
 void display_prompt(void);
 char *read_command(void);
 
-int main(void) {
-	while (1) {
+int main(void) 
+{
+	while (1) 
+	{
 		display_prompt();
 
 		char *input = read_command();
-		if (input == NULL) {
+		if (input == NULL) 
+		{
 			printf("\n");
 			break;
 		}
 
-		if (strlen(input) > 0) {
+		if (strlen(input) > 0) 
+		{
 			pid_t pid = fork();
 
-			if (pid == -1) {
+			if (pid == -1) 
+			{
 				perror("fork");
 				exit(EXIT_FAILURE);
 			}
 
-			if (pid == 0) {
+			if (pid == 0) 
+			{
 				execlp(input, input, (char *)NULL);
 				perror(input);
 				exit(EXIT_FAILURE);
-			} else {
+			}
+
+			{
+				else
 				int status;
+
 				wait(&status);
 
-				if (WIFEXITED(status) && WEXITSTATUS(status) != 0) {
+				if (WIFEXITED(status) && WEXITSTATUS(status) != 0) 
+				{
 					printf("%s: No such file or directory\n", input);
 				}
 			}
@@ -48,30 +59,34 @@ int main(void) {
 	return (EXIT_SUCCESS);
 }
 
-void display_prompt(void) {
+void display_prompt(void) 
+{
 	printf("#cisfun$ ");
 }
 
-char *read_command(void) {
+char *read_command(void) 
+{
 	char *input = NULL;
 	size_t bufsize = 0;
 
 	ssize_t read_chars = getline(&input, &bufsize, stdin);
 
-	if (read_chars == -1) {
-		if (feof(stdin)) {
+	if (read_chars == -1) 
+	{
+		if (feof(stdin)) 
+		{
 			free(input);
-			return NULL;
+			return (NULL);
 		} else {
 			perror("getline");
 			exit(EXIT_FAILURE);
 		}
 	}
 
-	if (input[read_chars - 1] == '\n') {
+	if (input[read_chars - 1] == '\n') 
+	{
 		input[read_chars - 1] = '\0';
 	}
 
-	return input;
+	return (input);
 }
-
