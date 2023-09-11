@@ -39,3 +39,42 @@ int main(void)
 				free(buffer);
 				exit(info.err_num);
 			}
+			else if (exit_status == 1)
+				continue;
+		}
+		else if (_strcmp(buffer, "cd") == 0)
+		{
+			_mycd(&info);
+			continue;
+		}
+
+
+
+
+
+
+
+		pid_t pid = fork();
+
+		if (pid == -1)
+		{
+			perror("fork");
+			exit(EXIT_FAILURE);
+		}
+		if (pid == 0)
+		{
+			char *args[] = {buffer, NULL};
+			if (execve(buffer, args, NULL) == -1)
+			{
+				perror("execve");
+				exit(EXIT_FAILURE);
+			}
+		}
+		else
+		{
+			wait(NULL);
+		}
+	}
+	
+	return (0);
+}

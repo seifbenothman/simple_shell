@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+<<<<<<< HEAD
 
 /**
  * main - Entry point
@@ -12,6 +13,11 @@
  */
 int main(void) 
 {
+=======
+#include "shell.h"
+
+int main(void) {
+>>>>>>> c4aabe0d734e99096820798606b33033f4a92091
 	char *input = NULL;
 	size_t bufsize = 0;
 
