@@ -30,9 +30,9 @@ int main(void)
 		if (buffer[characters_read - 1] == '\n')
 			buffer[characters_read - 1] = '\0';
 
-		if (_strcmp(buffer, "exit") == 0)
+		if (strcmp(buffer, "exit") == 0)
 		{
-			int exit_status =my exit(&info);
+			int exit_status = _myexit(&info);
 			if (exit_status == -2)
 			{
 				printf("Exit with status: %d\n", info.err_num);
@@ -42,7 +42,7 @@ int main(void)
 			else if (exit_status == 1)
 				continue;
 		}
-		else if (_strcmp(buffer, "cd") == 0)
+		else if (strcmp(buffer, "cd") == 0)
 		{
 			_mycd(&info);
 			continue;

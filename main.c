@@ -24,7 +24,7 @@ int main(void)
 		}
 		remove_newline(input);
 
-		if (_strcmp(input, "exit") == 0) 
+		if (strcmp(input, "exit") == 0) 
 		{
 			free(input);
 			break;
