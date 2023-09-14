@@ -10,39 +10,50 @@
  */
 int main(void)
 {
-	char *buffer = NULL;
+	char *input = NULL;
 	size_t bufsize = 0;
 	ssize_t characters_read;
 	info_t info;
-	
+	int exit_status;
+
 	while (1)
 	{
+		display_prompt();
+
+		characters_read = getline(&input, &bufsize, stdin);
+
+		if (characters_read == -1) 
+		{
+			handle_error("Error reading input");
+			continue;
+		}
+		remove_newline(input);
 		printf("#cisfun$ ");
-		characters_read = getline(&buffer, &bufsize, stdin);
+		characters_read = getline(&input, &bufsize, stdin);
 
 		if (characters_read == -1)
 		{
 			printf("\n");
-			free(buffer);
+			free(input);
 			exit(EXIT_SUCCESS);
 		}
 
-		if (buffer[characters_read - 1] == '\n')
-			buffer[characters_read - 1] = '\0';
+		if (input[characters_read - 1] == '\n')
+			input[characters_read - 1] = '\0';
 
-		if (strcmp(buffer, "exit") == 0)
+		if (strcmp(input, "exit") == 0)
 		{
-			int exit_status = _myexit(&info);
+			exit_status = my_exit(&info);
 			if (exit_status == -2)
 			{
 				printf("Exit with status: %d\n", info.err_num);
-				free(buffer);
+				free(input);
 				exit(info.err_num);
 			}
 			else if (exit_status == 1)
 				continue;
 		}
-		else if (strcmp(buffer, "cd") == 0)
+		else if (strcmp(input, "cd") == 0)
 		{
 			_mycd(&info);
 			continue;
@@ -57,8 +68,8 @@ int main(void)
 		}
 		if (pid == 0)
 		{
-			char *args[] = {buffer, NULL};
-			if (execve(buffer, args, NULL) == -1)
+			char *args[] = {input, NULL};
+			if (execve(input, args, NULL) == -1)
 			{
 				perror("execve");
 				exit(EXIT_FAILURE);
@@ -69,6 +80,6 @@ int main(void)
 			wait(NULL);
 		}
 	}
-	
-	return (0);
+
+	return (EXIT_SUCCESS);
 }
