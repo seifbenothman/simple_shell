@@ -43,7 +43,7 @@ int main(void)
 
 		if (strcmp(input, "exit") == 0)
 		{
-			exit_status = my_exit(&info);
+			exit_status = info.err_num;
 			if (exit_status == -2)
 			{
 				printf("Exit with status: %d\n", info.err_num);
