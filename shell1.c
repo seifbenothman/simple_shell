@@ -48,12 +48,6 @@ int main(void)
 			continue;
 		}
 
-
-
-
-
-
-
 		pid_t pid = fork();
 
 		if (pid == -1)
