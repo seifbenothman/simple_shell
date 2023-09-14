@@ -35,7 +35,7 @@ int exit_shell(info_t *info);
 
 /**
  *Read a command from the user.
- * 
+ *
  *@return A dynamically allocated string containing the user's input.
  *         NULL is returned on EOF (Ctrl+D).
  */

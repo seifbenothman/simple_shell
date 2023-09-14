@@ -29,7 +29,6 @@ int main(void)
 			free(input);
 			break;
 		}
-
 		pid_t pid = fork();
 
 		if (pid == -1) 
@@ -37,7 +36,6 @@ int main(void)
 			handle_error("Error forking");
 			continue;
 		}
-
 		if (pid == 0) 
 		{
 			char *args[256];
@@ -51,7 +49,6 @@ int main(void)
 				token = strtok(NULL, " ");
 				i++;
 			}
-
 			args[i] = NULL;
 
 			if (execvp(args[0], args) == -1) 
@@ -65,9 +62,7 @@ int main(void)
 			int status;
 			wait(&status);
 		}
-
 		free(input);
 	}
-
 	return (EXIT_SUCCESS);
 }

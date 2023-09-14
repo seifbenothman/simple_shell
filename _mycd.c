@@ -6,8 +6,8 @@
  * _mycd - Change the current working directory.
  * @info: Pointer to info_t structure.
  *
- * This function changes the current working directory based on the provided path
- * or defaults to the user's home directory if no path is specified. It also updates
+ * This function changes the current working directory based
+ * or defaults to the user's home directory if no path is specified.
  * the PWD and OLDPWD environment variables accordingly.
  */
 void _mycd(info_t *info)
@@ -15,7 +15,7 @@ void _mycd(info_t *info)
 	char *path = NULL;
 	int chdir_ret;
 
-	if(!path)
+	if (!path)
 	{
 		path = getenv("HOME");
 		if (!path)
@@ -34,6 +34,7 @@ void _mycd(info_t *info)
 	else
 	{
 		char cwd[1024];
+
 		if (getcwd(cwd, sizeof(cwd)) != NULL)
 		{
 			setenv("PWD", cwd, 1);
