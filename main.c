@@ -5,20 +5,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include "shell.h"
-<<<<<<< HEAD
 
-/**
- * main - Entry point
- *
- * Return: Always EXIT_SUCCESS
- */
 int main(void) 
 {
-=======
-#include "shell.h"
-
-int main(void) {
->>>>>>> c4aabe0d734e99096820798606b33033f4a92091
 	char *input = NULL;
 	size_t bufsize = 0;
 
@@ -33,8 +22,13 @@ int main(void) {
 			handle_error("Error reading input");
 			continue;
 		}
-
 		remove_newline(input);
+
+		if (_strcmp(input, "exit") == 0) 
+		{
+			free(input);
+			break;
+		}
 
 		pid_t pid = fork();
 
@@ -46,15 +40,24 @@ int main(void) {
 
 		if (pid == 0) 
 		{
+			char *args[256];
+
 			char *token = strtok(input, " ");
-			if (token) {
-				execvp(token, &token);
+			int i = 0;
+
+			while (token != NULL) 
+			{
+				args[i] = token;
+				token = strtok(NULL, " ");
+				i++;
+			}
+
+			args[i] = NULL;
+
+			if (execvp(args[0], args) == -1) 
+			{
 				handle_error("Command not found");
 				exit(EXIT_FAILURE);
-			} 
-			else 
-			{
-				exit(EXIT_SUCCESS);
 			}
 		} 
 		else 
