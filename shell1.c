@@ -26,7 +26,9 @@ void initialize_info(info_t *info)
 	info->err_num = 0;
 }
 
-void run_shell(info_t *info) {
+void run_shell(info_t *info) 
+{
+	pid_t pid;
 	char *input = NULL;
 	size_t bufsize = 0;
 	ssize_t characters_read;
@@ -70,14 +72,21 @@ void run_shell(info_t *info) {
 			continue;
 		}
 
-		pid_t pid = fork();
+		pid = fork();
 
 		if (pid == -1) {
 			perror("fork");
 			exit(EXIT_FAILURE);
+		char **args = NULL;
+		args = malloc(2 * sizeof(char *));
+		if (args == NULL) {
+		perror("malloc");
+		exit(EXIT_FAILURE);
+		}
+		args[0] = input;
+		args[1] = NULL;
 		}
 		if (pid == 0) {
-			char *args[] = {input, NULL};
 			if (execve(input, args, NULL) == -1) {
 				perror("execve");
 				exit(EXIT_FAILURE);
