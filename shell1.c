@@ -3,6 +3,26 @@
 #include <unistd.h>
 #include "shell.h"
 
+void display_prompt(void) 
+{
+	printf("#cisfun$ ");
+	fflush(stdout);
+}
+
+void handle_error(const char *message)
+{
+	perror(message);
+}
+
+void remove_newline(char *str)
+{
+	int len = strlen(str);
+	if (len > 0 && str[len - 1] == '\n')
+	{
+		str[len - 1] = '\0';
+	}
+}
+
 /**
  * main - Simple shell program
  *
