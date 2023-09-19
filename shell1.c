@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include "shell.h"
 
-void display_prompt(void) 
+void display_prompt(void)
 {
 	printf("#cisfun$ ");
 	fflush(stdout);
