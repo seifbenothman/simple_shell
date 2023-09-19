@@ -1,7 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include "shell.h"
+
+/**
+ * display_prompt - Display the shell prompt.
+ */
 
 void display_prompt(void)
 {
@@ -9,10 +14,20 @@ void display_prompt(void)
 	fflush(stdout);
 }
 
+/**
+ * handle_error - Handle and print error messages.
+ * @message: The error message to print.
+ */
+
 void handle_error(const char *message)
 {
 	perror(message);
 }
+
+/**
+ * remove_newline - Remove newline character from the end of a string.
+ * @str: The string to process.
+ */
 
 void remove_newline(char *str)
 {
