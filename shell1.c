@@ -15,6 +15,7 @@ int main(void)
 	ssize_t characters_read;
 	info_t info;
 	int exit_status;
+	pid_t pid;
 
 	while (1)
 	{
