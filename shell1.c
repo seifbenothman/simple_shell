@@ -5,8 +5,40 @@
 #include "shell.h"
 
 /**
- * Function prototypes
+ * display_prompt - Display the shell prompt.
  */
+
+void display_prompt(void)
+{
+	printf("#cisfun$ ");
+	fflush(stdout);
+}
+
+/**
+ * handle_error - Handle and print error messages.
+ * @message: The error message to print.
+ */
+
+void handle_error(const char *message)
+{
+	perror(message);
+}
+
+/**
+ * remove_newline - Remove newline character from the end of a string.
+ * @str: The string to process.
+ */
+
+void remove_newline(char *str)
+{
+	int len = strlen(str);
+
+	if (len > 0 && str[len - 1] == '\n')
+	{
+		str[len - 1] = '\0';
+	}
+}
+
 void initialize_info(info_t *info);
 void run_shell(info_t *info);
 void cleanup(info_t *info);
@@ -35,6 +67,13 @@ void run_shell(info_t *info)
 	int exit_status;
 
 	while (1) {
+		char **args = NULL;
+		args = malloc(2 * sizeof(char *));
+		if (args == NULL) {
+			perror("malloc");
+			exit(EXIT_FAILURE);
+		}
+
 		display_prompt();
 		characters_read = getline(&input, &bufsize, stdin);
 
@@ -58,6 +97,27 @@ void run_shell(info_t *info)
 			input[characters_read - 1] = '\0';
 		}
 
+		pid = fork();
+
+		if (pid == -1) {
+			perror("fork");
+			exit(EXIT_FAILURE);
+		}
+
+		args[0] = input;
+		args[1] = NULL;
+
+		if (pid == 0) {
+			if (execve(input, args, NULL) == -1) {
+				perror("execve");
+				exit(EXIT_FAILURE);
+			}
+			free(args);
+		} else {
+			wait(NULL);
+			free(args);
+		}
+
 		if (strcmp(input, "exit") == 0) {
 			exit_status = info->err_num;
 			if (exit_status == -2) {
@@ -71,36 +131,12 @@ void run_shell(info_t *info)
 			_mycd(info);
 			continue;
 		}
-
-		pid = fork();
-
-		if (pid == -1) {
-			perror("fork");
-			exit(EXIT_FAILURE);
-		char **args = NULL;
-		args = malloc(2 * sizeof(char *));
-		if (args == NULL) {
-		perror("malloc");
-		exit(EXIT_FAILURE);
-		}
-		args[0] = input;
-		args[1] = NULL;
-		}
-		if (pid == 0) {
-			if (execve(input, args, NULL) == -1) {
-				perror("execve");
-				exit(EXIT_FAILURE);
-			}
-		} else {
-			wait(NULL);
-		}
 	}
 }
 
 void cleanup(info_t *info) 
 {
-	if (info->cwd)
-	{
+	if (info->cwd) {
 		free(info->cwd);
 	}
 }
