@@ -18,6 +18,7 @@ int main(void)
 	ssize_t characters_read;
 	int status;
 	pid_t pid;
+	char *envp[] = {NULL};
 
 	while (1)
 	{
@@ -52,35 +53,36 @@ int main(void)
 		if (pid == 0)
 		{
 			char *command = strtok(buffer, " ");
-			char *argv[] = {command, NULL};
-			char *envp[] = {NULL};
 
-			if (execve(command, argv, envp) == -1)
+			char **argv = (char **)malloc(2 * sizeof(char *));
+			if(argv == NULL)
 			{
+				perror("malloc");
+				argv[0] = command;
+				argv[1] = NULL;
+
+				char *envp[] = {NULL};
+
+				if (execve(command, argv, envp) == -1)
 				{
-					perror("execve");
-					free(buffer);
-					exit(EXIT_FAILURE);
+					{
+						perror("execve");
+						free(buffer);
+						free(argv);
+						exit(EXIT_FAILURE);
+					}
+				}
+				else
+				{
+					if (wait(&status) == -1)
+					{
+						perror("wait");
+						free(buffer);
+						exit(EXIT_FAILURE);
+					}
 				}
 			}
-			else
-			{
-				fprintf(stderr, "./shell: %s: No such file or directory\n", command);
-				free(buffer);
-				exit(EXIT_FAILURE);
-			}
-		}
-		else
-		{
-			if (wait(&status) == -1)
-			{
-				perror("wait");
-				free(buffer);
-				exit(EXIT_FAILURE);
-			}
-		}
-	}
 
-	free(buffer);
-	return (EXIT_SUCCESS);
-}
+			free(buffer);
+			return (EXIT_SUCCESS);
+}    
