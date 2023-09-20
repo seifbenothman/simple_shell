@@ -55,34 +55,35 @@ int main(void)
 			char *command = strtok(buffer, " ");
 
 			char **argv = (char **)malloc(2 * sizeof(char *));
-			if(argv == NULL)
+			if (argv == NULL)
 			{
 				perror("malloc");
-				argv[0] = command;
-				argv[1] = NULL;
-
-				char *envp[] = {NULL};
-
-				if (execve(command, argv, envp) == -1)
-				{
-					{
-						perror("execve");
-						free(buffer);
-						free(argv);
-						exit(EXIT_FAILURE);
-					}
-				}
-				else
-				{
-					if (wait(&status) == -1)
-					{
-						perror("wait");
-						free(buffer);
-						exit(EXIT_FAILURE);
-					}
-				}
+				free(buffer);
+				exit(EXIT_FAILURE);
 			}
 
-			free(buffer);
-			return (EXIT_SUCCESS);
-}    
+			argv[0] = command;
+			argv[1] = NULL;
+
+			if (execve(command, argv, envp) == -1)
+			{
+				perror("execve");
+				free(buffer);
+				free(argv);
+				exit(EXIT_FAILURE);
+			}
+		}
+		else
+		{
+			if (wait(&status) == -1)
+			{
+				perror("wait");
+				free(buffer);
+				exit(EXIT_FAILURE);
+			}
+		}
+	}
+
+	free(buffer);
+	return (EXIT_SUCCESS);
+}
