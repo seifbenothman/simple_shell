@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "shell.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -75,4 +76,3 @@ int main(void)
 	free(buffer);
 	return (EXIT_SUCCESS);
 }
-
