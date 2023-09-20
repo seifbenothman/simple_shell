@@ -16,112 +16,109 @@ char *find_command(const char *command)
 		perror("strdup");
 		exit(EXIT_FAILURE);
 	}
-	snprintf(full_path, sizeof(full_path), "%s/%s", token, command);
 
-	if (access(full_path, X_OK) == 0) 
+	char *token = strtok(path_copy, ":");
+	while (token != NULL) 
 	{
-		free(path_copy);
-		return strdup(full_path);
+		char full_path[256];
+		snprintf(full_path, sizeof(full_path), "%s/%s", token, command);
+
+		if (access(full_path, X_OK) == 0) 
+		{
+			free(path_copy);
+			return strdup(full_path);
+		}
+
+		token = strtok(NULL, ":");
 	}
 
-	token = strtok(NULL, ":");
+	free(path_copy);
+	return (NULL);
 }
 
-free(path_copy);
-return (NULL);
-}
+int main(void)
+{
+	char *buffer = NULL;
+	size_t bufsize = 0;
+	ssize_t characters_read;
+	int status;
+	pid_t pid;
+	char *envp[] = {NULL};
 
-char *token = strtok(path_copy, ":");
-while (token != NULL) {
-	char full_path[256];
-
-/**
- * main - Entry point for the simple shell.
- *
- * Return: Always 0.
- */
-	int main(void)
+	while (1)
 	{
-		char *buffer = NULL;
-		size_t bufsize = 0;
-		ssize_t characters_read;
-		int status;
-		pid_t pid;
-		char *envp[] = {NULL};
+		printf("#cisfun$ ");
 
-		while (1)
+		characters_read = getline(&buffer, &bufsize, stdin);
+
+		if (characters_read == -1)
 		{
-			printf("#cisfun$ ");
-
-			characters_read = getline(&buffer, &bufsize, stdin);
-
-			if (characters_read == -1)
+			if (feof(stdin))
 			{
-				if (feof(stdin))
-				{
-					printf("\n");
-					free(buffer);
-					exit(EXIT_SUCCESS);
-				}
-				perror("getline");
+				printf("\n");
 				free(buffer);
-				exit(EXIT_FAILURE);
+				exit(EXIT_SUCCESS);
 			}
-
-			buffer[strcspn(buffer, "\n")] = '\0';
-
-			pid = fork();
-
-			if (pid == -1)
-			{
-				perror("fork");
-				free(buffer);
-				exit(EXIT_FAILURE);
-			}
-
-			if (pid == 0)
-			{
-				char *command = strtok(buffer, " ");
-				char *full_path = find_command(command);
-
-				if (full_path == NULL) 
-				{
-					fprintf(stderr, "./shell: %s: command not found\n", command);
-					free(buffer);
-					continue;
-				}
-					char **argv = (char **)malloc(2 * sizeof(char *));
-					if (argv == NULL)
-					{
-						perror("malloc");
-						free(buffer);
-						free(full_path);
-						exit(EXIT_FAILURE);
-					}
-
-					argv[0] = full_path;
-					argv[1] = NULL;
-
-					if (execve(full_path, argv, envp) == -1)
-					{
-						perror("execve");
-						free(buffer);
-						free(argv);
-						free(full_path);
-						exit(EXIT_FAILURE);
-					}
-				}
-				else
-				{
-					if (wait(&status) == -1)
-					{
-						perror("wait");
-						free(buffer);
-						exit(EXIT_FAILURE);
-					}
-				}
-			}
-
+			perror("getline");
 			free(buffer);
-			return (EXIT_SUCCESS);
+			exit(EXIT_FAILURE);
 		}
+
+		buffer[strcspn(buffer, "\n")] = '\0';
+
+		pid = fork();
+
+		if (pid == -1)
+		{
+			perror("fork");
+			free(buffer);
+			exit(EXIT_FAILURE);
+		}
+
+		if (pid == 0)
+		{
+			char *command = strtok(buffer, " ");
+			char *full_path = find_command(command);
+
+			if (full_path == NULL)
+			{
+				fprintf(stderr, "./shell: %s: command not found\n", command);
+				free(buffer);
+				continue;
+			}
+
+			char **argv = (char **)malloc(2 * sizeof(char *));
+			if (argv == NULL)
+			{
+				perror("malloc");
+				free(buffer);
+				free(full_path);
+				exit(EXIT_FAILURE);
+			}
+
+			argv[0] = full_path;
+			argv[1] = NULL;
+
+			if (execve(full_path, argv, envp) == -1)
+			{
+				perror("execve");
+				free(buffer);
+				free(argv);
+				free(full_path);
+				exit(EXIT_FAILURE);
+			}
+		}
+		else
+		{
+			if (wait(&status) == -1)
+			{
+				perror("wait");
+				free(buffer);
+				exit(EXIT_FAILURE);
+			}
+		}
+	}
+
+	free(buffer);
+	return (EXIT_SUCCESS);
+}
