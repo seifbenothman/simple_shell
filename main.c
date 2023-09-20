@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "shell.h"
 #include <sys/types.h>
 #include <sys/wait.h>
+#include "shell.h"
 
 /**
- *main - Entry point for the simple shell.
+ * main - Entry point for the simple shell.
  *
- *Return: Always 0.
+ * Return: Always 0.
  */
 int main(void)
 {
@@ -21,7 +21,7 @@ int main(void)
 
 	while (1)
 	{
-		printf("$ ");
+		printf("#cisfun$ ");
 
 		characters_read = getline(&buffer, &bufsize, stdin);
 
@@ -51,13 +51,21 @@ int main(void)
 
 		if (pid == 0)
 		{
-			char *args[2];
-			args[0] = buffer;
-			args[1] = NULL;
+			char *command = strtok(buffer, " ");
+			char *argv[] = {command, NULL};
+			char *envp[] = {NULL};
 
-			if (execvp(buffer, args) == -1)
+			if (execve(command, argv, envp) == -1)
 			{
-				perror("execvp");
+				{
+					perror("execve");
+					free(buffer);
+					exit(EXIT_FAILURE);
+				}
+			}
+			else
+			{
+				fprintf(stderr, "./shell: %s: No such file or directory\n", command);
 				free(buffer);
 				exit(EXIT_FAILURE);
 			}
