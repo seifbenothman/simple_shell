@@ -3,6 +3,13 @@
 #include <string.h>
 #include "shell.h"
 
+/**
+ * find_command_in_path - Find a command in the directories listed in the PATH.
+ *
+ * @command: The command to search for.
+ *
+ * Return: A pointer to the full path of the command if found, or NULL if not found.
+ */
 char *find_command_in_path(const char *command)
 {
 
@@ -30,6 +37,12 @@ char *find_command_in_path(const char *command)
 	return (NULL);
 }
 
+/**
+ * execute_command_by_path - Execute a command by its full path.
+ *
+ * @shell_data: The shell data structure.
+ * @command_path: The full path of the command to execute.
+ */
 void execute_command_by_path(
 		shell_data_t *shell_data, const char *command_path)
 {
