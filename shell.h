@@ -10,5 +10,6 @@
 
 /* Function prototypes */
 int main(void);
+char *custom_getline(void);
 
 #endif /* SHELL_H */

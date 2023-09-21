@@ -6,6 +6,8 @@
 #include <sys/wait.h>
 #include "shell.h"
 
+char *custom_getline(void);
+
 /**
  * main - Entry point for the simple shell.
  *
