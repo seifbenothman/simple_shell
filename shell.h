@@ -8,9 +8,9 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 
-char *get_env(char *env_var, char **env);
-void add_path(char *a, char *exe, char **env);
-void handle_special(char *arg);
+#define MAX_INPUT_LENGTH 1024
+
 void execute(char *command, char **env, int line_number);
+void execute_command(const char *command);
 
 #endif /* SHELL_H */
