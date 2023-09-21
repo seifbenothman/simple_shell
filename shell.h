@@ -8,9 +8,7 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 
-#define MAX_INPUT_LENGTH 1024
-
-void execute(char *command, char **env, int line_number);
-void execute_command(const char *command);
+/* Function prototypes */
+int main(void);
 
 #endif /* SHELL_H */
