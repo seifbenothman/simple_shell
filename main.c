@@ -4,86 +4,83 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
 #include "shell.h"
 
+
 /**
- * main - Entry point for the simple shell.
+ * free_shell_data - Free memory allocated for shell data structure
  *
- * Return: Always 0.
+ * @shell_data: Shell data structure
+ * Return: No return value
  */
-int main(void)
+void free_shell_data(shell_data_t *shell_data)
 {
-	char *buffer = NULL;
-	size_t bufsize = 0;
-	ssize_t characters_read;
-	int status;
-	pid_t pid;
-	char *envp[] = {NULL};
+	unsigned int i;
 
-	while (1)
+	for (i = 0; shell_data->environment[i]; i++)
 	{
-		printf("#cisfun$ ");
-
-		characters_read = getline(&buffer, &bufsize, stdin);
-
-		if (characters_read == -1)
-		{
-			if (feof(stdin))
-			{
-				printf("\n");
-				free(buffer);
-				exit(EXIT_SUCCESS);
-			}
-			perror("getline");
-			free(buffer);
-			exit(EXIT_FAILURE);
-		}
-
-		buffer[strcspn(buffer, "\n")] = '\0';
-
-		pid = fork();
-
-		if (pid == -1)
-		{
-			perror("fork");
-			free(buffer);
-			exit(EXIT_FAILURE);
-		}
-
-		if (pid == 0)
-		{
-			char *command = strtok(buffer, " ");
-
-			char **argv = (char **)malloc(2 * sizeof(char *));
-			if (argv == NULL)
-			{
-				perror("malloc");
-				free(buffer);
-				exit(EXIT_FAILURE);
-			}
-
-			argv[0] = command;
-			argv[1] = NULL;
-
-			if (execve(command, argv, envp) == -1)
-			{
-				perror("execve");
-				free(buffer);
-				free(argv);
-				exit(EXIT_FAILURE);
-			}
-		}
-		else
-		{
-			if (wait(&status) == -1)
-			{
-				perror("wait");
-				free(buffer);
-				exit(EXIT_FAILURE);
-			}
-		}
+		free(shell_data->environment[i]);
 	}
 
-	free(buffer);
-	return (EXIT_SUCCESS);
+	free(shell_data->environment);
+	free(shell_data->process_id);
+}
+
+/**
+ * initialize_shell_data - Initialize shell data structure
+ *
+ * @shell_data: Shell data structure
+ * @argv: Argument vector
+ * Return: No return value
+ */
+void initialize_shell_data(shell_data_t *shell_data, char **argv)
+{
+	unsigned int i;
+
+	shell_data->argv = argv;
+	shell_data->input_buffer = NULL;
+	shell_data->args = NULL;
+	shell_data->exit_status = 0;
+	shell_data->command_count = 1;
+
+	for (i = 0; environ[i]; i++)
+	{
+/* Calculate the number of environment variables */
+	}
+
+	shell_data->environment = malloc(sizeof(char *) * (i + 1));
+
+	for (i = 0; environ[i]; i++)
+	{
+		shell_data->environment[i] = my_strdup(environ[i]);
+	}
+
+	shell_data->environment[i] = NULL;
+	shell_data->process_id = convert_to_string(getpid());
+}
+
+/**
+ * main - Entry point for the custom shell
+ *
+ * @argc: Argument count
+ * @argv: Argument vector
+ *
+ * Return: 0 on success.
+ */
+
+int main(int argc, char **argv)
+{
+	shell_data_t shell_data;
+	(void)argc;
+
+	signal(SIGINT, handle_sigint);
+	initialize_shell_data(&shell_data, argv);
+	shell_loop(&shell_data);
+	free_shell_data(&shell_data);
+
+	if (shell_data.exit_status < 0)
+		return (255);
+
+	return (shell_data.exit_status);
 }
