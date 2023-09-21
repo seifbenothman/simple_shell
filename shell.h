@@ -7,7 +7,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <signal.h>
-
+struct info_t;
 extern char **environ;
 
 /* Define your custom data structures here */
@@ -34,7 +34,11 @@ typedef struct shell_data_t
 }
 shell_data_t;
 
-/* Function prototypes */
+#define INFO_INIT \
+{NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, \
+	0, 0, 0}
+
+/* Function prototypes for your custom functions */
 void free_shell_data(shell_data_t *shell_data);
 void initialize_shell_data(shell_data_t *shell_data, char **argv);
 void handle_sigint(int signal);
@@ -45,4 +49,11 @@ char *find_command_in_path(const char *command);
 void execute_command_by_path(
 		shell_data_t *shell_data, const char *command_path);
 
-#endif /* MY_SHELL_H */
+/* Function prototypes for the code you provided */
+int _myenv(shell_data_t *shell_data);
+char *_getenv(shell_data_t *shell_data, const char *name);
+int _mysetenv(shell_data_t *shell_data);
+int _myunsetenv(shell_data_t *shell_data);
+int populate_env_list(shell_data_t *shell_data);
+
+#endif /* SHELL_H */
