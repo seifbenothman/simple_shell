@@ -11,7 +11,18 @@
 extern char **environ;
 
 /* Define your custom data structures here */
-typedef struct
+
+/**
+ * struct shell_data_t - Custom data structure for shell data.
+ * @argv: An array of command-line arguments.
+ * @input_buffer: A buffer for storing user input.
+ * @args: An array of parsed command arguments.
+ * @exit_status: The exit status of the shell.
+ * @command_count: The count of executed commands.
+ * @environment: An array of environment variables.
+ * @process_id: The process ID of the shell.
+ */
+typedef struct shell_data_t
 {
 	char **argv;
 	char *input_buffer;

@@ -8,7 +8,7 @@
  *
  * @command: The command to search for.
  *
- * Return: A pointer to the full path of the command if found, or NULL if not found.
+ * Return: A pointer to the full path of the command if found, or NULL
  */
 char *find_command_in_path(const char *command)
 {
