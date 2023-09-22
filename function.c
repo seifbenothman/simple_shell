@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include "shell.h"
 
 #define MAX_INPUT_SIZE 1024
 #define MAX_ARG_SIZE 64
@@ -17,7 +18,7 @@ char *getEnvVar(char *envVarName, char **env)
 		key = strtok(env[i], "=");
 		if (strcmp(envVarName, key) == 0)
 		{
-			return strtok(NULL, "\n");
+			return (strtok(NULL, "\n"));
 		}
 		i++;
 	}
