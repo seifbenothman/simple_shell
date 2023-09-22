@@ -109,7 +109,6 @@ void executeCommand(char *inputCmd, char *pathVar, int *commandCount, char **env
 		freeArgs(args, argCount);
 	}
 }
-
 int main(int argc, char **argv, char **env) {
 	char *userInput = NULL;
 	size_t inputSize = 0;
@@ -121,9 +120,6 @@ int main(int argc, char **argv, char **env) {
 	printf("$ ");
 	getline(&userInput, &inputSize, stdin);
 	while (userInput) {
-
-		if (strcmp(userInput, "exit\n") == 0)
-			break;
 
 		if (userInput[0] == '\n') {
 			userInput[0] = '\0';
