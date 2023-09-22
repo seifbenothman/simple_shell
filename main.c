@@ -45,25 +45,17 @@ void findExecutable(char *command, char *exePath, char *pathVar) {
 }
 
 void handleSpecialChars(char *arg) {
-	char *specialChars = "\"'`\\*&#";
-	char *escapedArg = malloc(strlen(arg) * 2 + 1);
-	int i, j = 0;
+	int len = strlen(arg);
+	int k;
 
-	if (escapedArg == NULL) {
-		perror("malloc");
-		exit(1);
-	}
-
-	for (i = 0; arg[i]; i++) {
-		if (strchr(specialChars, arg[i])) {
-			escapedArg[j++] = '\\';
+	for (k = 0; k < len; k++) {
+		if (strchr("\"'`\\*&#", arg[k])) {
+			memmove(arg + k + 1, arg + k, len - k + 1);
+			arg[k] = '\\';
+			len++;
+			k++;
 		}
-		escapedArg[j++] = arg[i];
 	}
-
-	escapedArg[j] = '\0';
-	strcpy(arg, escapedArg);
-	free(escapedArg);
 }
 
 void freeArgs(char *args[], int argCount) {
@@ -77,23 +69,20 @@ void freeArgs(char *args[], int argCount) {
 void executeCommand(char *inputCmd, char *pathVar, int *commandCount, char **env) {
 	char *args[MAX_ARG_SIZE];
 	int argCount = 0;
+	int j;
 
 	char *token = strtok(inputCmd, " \t\n");
 	pid_t pid;
 
 	while (token != NULL && argCount < MAX_ARG_SIZE - 1) {
-		args[argCount] = malloc(strlen(token) + 1);
-
-		if (args[argCount] == NULL) {
-			perror("malloc");
-			exit(1);
-		}
-		strcpy(args[argCount], token);
-		handleSpecialChars(args[argCount]);
-		argCount++;
+		args[argCount++] = strdup(token);
 		token = strtok(NULL, " \t\n");
 	}
 	args[argCount] = NULL;
+
+	for (j = 0; j < argCount; j++) {
+		handleSpecialChars(args[j]);
+	}
 
 	pid = fork();
 
@@ -116,6 +105,7 @@ void executeCommand(char *inputCmd, char *pathVar, int *commandCount, char **env
 		exit(1);
 	} else {
 		wait(NULL);
+
 		freeArgs(args, argCount);
 	}
 }
@@ -131,9 +121,6 @@ int main(int argc, char **argv, char **env) {
 	printf("$ ");
 	getline(&userInput, &inputSize, stdin);
 	while (userInput) {
-
-		if (strcmp(userInput, "exit\n") == 0)
-			break;
 
 		if (userInput[0] == '\n') {
 			userInput[0] = '\0';
