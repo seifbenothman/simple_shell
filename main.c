@@ -7,13 +7,16 @@
 #define MAX_INPUT_SIZE 1024
 #define MAX_ARG_SIZE 64
 
-char *getEnvVar(char *envVarName, char **env) {
+char *getEnvVar(char *envVarName, char **env)
+{
 	int i = 0;
 	char *key;
 
-	while (env[i]) {
+	while (env[i])
+	{
 		key = strtok(env[i], "=");
-		if (strcmp(envVarName, key) == 0) {
+		if (strcmp(envVarName, key) == 0)
+		{
 			return strtok(NULL, "\n");
 		}
 		i++;
@@ -21,7 +24,8 @@ char *getEnvVar(char *envVarName, char **env) {
 	return (NULL);
 }
 
-void findExecutable(char *command, char *exePath, char *pathVar) {
+void findExecutable(char *command, char *exePath, char *pathVar)
+{
 	char *path = getenv(pathVar);
 	char *token;
 	char tempPath[MAX_INPUT_SIZE];
@@ -29,12 +33,14 @@ void findExecutable(char *command, char *exePath, char *pathVar) {
 	strcpy(tempPath, path);
 	token = strtok(tempPath, ":");
 
-	while (token != NULL) {
+	while (token != NULL)
+	{
 		strcpy(exePath, token);
 		strcat(exePath, "/");
 		strcat(exePath, command);
 
-		if (access(exePath, X_OK) == 0) {
+		if (access(exePath, X_OK) == 0)
+		{
 			return;
 		}
 
@@ -44,12 +50,15 @@ void findExecutable(char *command, char *exePath, char *pathVar) {
 	exePath[0] = '\0';
 }
 
-void handleSpecialChars(char *arg) {
+void handleSpecialChars(char *arg)
+{
 	int len = strlen(arg);
 	int k;
 
-	for (k = 0; k < len; k++) {
-		if (strchr("\"'`\\*&#", arg[k])) {
+	for (k = 0; k < len; k++)
+	{
+		if (strchr("\"'`\\*&#", arg[k]))
+		{
 			memmove(arg + k + 1, arg + k, len - k + 1);
 			arg[k] = '\\';
 			len++;
@@ -58,15 +67,18 @@ void handleSpecialChars(char *arg) {
 	}
 }
 
-void freeArgs(char *args[], int argCount) {
+void freeArgs(char *args[], int argCount)
+{
 	int j;
 
-	for (j = 0; j < argCount; j++) {
+	for (j = 0; j < argCount; j++)
+	{
 		free(args[j]);
 	}
 }
 
-void executeCommand(char *inputCmd, char *pathVar, int *commandCount, char **env) {
+void executeCommand(char *inputCmd, char *pathVar, int *commandCount, char **env)
+{
 	char *args[MAX_ARG_SIZE];
 	int argCount = 0;
 	int j;
@@ -74,26 +86,32 @@ void executeCommand(char *inputCmd, char *pathVar, int *commandCount, char **env
 	char *token = strtok(inputCmd, " \t\n");
 	pid_t pid;
 
-	while (token != NULL && argCount < MAX_ARG_SIZE - 1) {
+	while (token != NULL && argCount < MAX_ARG_SIZE - 1)
+	{
 		args[argCount++] = strdup(token);
 		token = strtok(NULL, " \t\n");
 	}
 	args[argCount] = NULL;
 
-	for (j = 0; j < argCount; j++) {
+	for (j = 0; j < argCount; j++)
+	{
 		handleSpecialChars(args[j]);
 	}
 
 	pid = fork();
 
-	if (pid == -1) {
+	if (pid == -1)
+	{
 		perror("fork");
 		freeArgs(args, argCount);
-	} else if (pid == 0) {
+	}
+	else if (pid == 0)
+	{
 		char exePath[MAX_INPUT_SIZE];
 
 		findExecutable(args[0], exePath, pathVar);
-		if (exePath[0] == '\0') {
+		if (exePath[0] == '\0')
+		{
 			fprintf(stderr, "hsh: %d: %s: command not found\n", (*commandCount)++, args[0]);
 			freeArgs(args, argCount);
 			exit(1);
@@ -103,28 +121,34 @@ void executeCommand(char *inputCmd, char *pathVar, int *commandCount, char **env
 
 		freeArgs(args, argCount);
 		exit(1);
-	} else {
+	}
+	else
+	{
 		wait(NULL);
 
 		freeArgs(args, argCount);
 	}
 }
 
-int main(int argc, char **argv, char **env) {
+int main(int argc, char **argv, char **env)
+{
 	char userInput[MAX_INPUT_SIZE];
 	int commandCount = 1;
 
 	(void)argc;
 	(void)argv;
-	while (1) {
+	while (1)
+	{
 		printf("$ ");
-		if (fgets(userInput, sizeof(userInput), stdin) == NULL) {
+		if (fgets(userInput, sizeof(userInput), stdin) == NULL)
+		{
 			break;
 		}
 
 		userInput[strcspn(userInput, "\n")] = '\0';
 
-		if (strcmp(userInput, "exit") == 0) {
+		if (strcmp(userInput, "exit") == 0)
+		{
 			break;
 		}
 
