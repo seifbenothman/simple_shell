@@ -24,8 +24,10 @@ char *getEnvVar(char *envVarName, char **env) {
 void findExecutable(char *command, char *exePath, char *pathVar) {
 	char *path = getenv(pathVar);
 	char *token;
+	char tempPath[MAX_INPUT_SIZE];
 
-	token = strtok(path, ":");
+	strcpy(tempPath, path);
+	token = strtok(tempPath, ":");
 
 	while (token != NULL) {
 		strcpy(exePath, token);
@@ -64,7 +66,7 @@ void freeArgs(char *args[], int argCount) {
 	}
 }
 
-void executeCommand(char *inputCmd, char *pathVar, int *commandCount) {
+void executeCommand(char *inputCmd, char *pathVar, int *commandCount, char **env) {
 	char *args[MAX_ARG_SIZE];
 	int argCount = 0;
 	int j;
@@ -88,7 +90,7 @@ void executeCommand(char *inputCmd, char *pathVar, int *commandCount) {
 		perror("fork");
 		freeArgs(args, argCount);
 	} else if (pid == 0) {
-		char exePath[50];
+		char exePath[MAX_INPUT_SIZE];
 
 		findExecutable(args[0], exePath, pathVar);
 		if (exePath[0] == '\0') {
@@ -96,8 +98,8 @@ void executeCommand(char *inputCmd, char *pathVar, int *commandCount) {
 			freeArgs(args, argCount);
 			exit(1);
 		}
-		execvp(exePath, args);
-		perror("./myShell");
+		execve(exePath, args, env);
+		perror("execve");
 
 		freeArgs(args, argCount);
 		exit(1);
@@ -108,10 +110,12 @@ void executeCommand(char *inputCmd, char *pathVar, int *commandCount) {
 	}
 }
 
-int main(void) {
+int main(int argc, char **argv, char **env) {
 	char userInput[MAX_INPUT_SIZE];
 	int commandCount = 1;
 
+	(void)argc;
+	(void)argv;
 	while (1) {
 		printf("$ ");
 		if (fgets(userInput, sizeof(userInput), stdin) == NULL) {
@@ -124,7 +128,7 @@ int main(void) {
 			break;
 		}
 
-		executeCommand(userInput, "PATH", &commandCount);
+		executeCommand(userInput, "PATH", &commandCount, env);
 		commandCount++;
 	}
 
