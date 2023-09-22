@@ -10,7 +10,7 @@ char *getEnvVar(char *envVarName, char **env)
 		key = strtok(env[i], "=");
 		if (strcmp(envVarName, key) == 0)
 		{
-			return strtok((NULL, "\n"));
+			return (strtok(NULL, "\n"));
 		}
 		i++;
 	}
