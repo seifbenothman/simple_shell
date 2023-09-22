@@ -8,6 +8,12 @@
 #define MAX_INPUT_SIZE 1024
 #define MAX_ARG_SIZE 64
 
+/* Parse the user input command into arguments.
+ *
+ * inputCmd: The user input command string.
+ * args: An array to store the parsed arguments.
+ * argCount: A pointer to an integer to store the number of arguments.
+ */
 void parseInputCommand(char *inputCmd, char *args[], int *argCount)
 {
 	char *token = strtok(inputCmd, " \t\n");
@@ -21,6 +27,13 @@ void parseInputCommand(char *inputCmd, char *args[], int *argCount)
 	args[*argCount] = NULL;
 }
 
+/* Run a command with its arguments.
+ *
+ * args: An array of command arguments.
+ * pathVar: The name of the PATH environment variable.
+ * commandCount: A pointer to an integer representing the command count.
+ * env: The array of environment variables.
+ */
 void runCommand(char *args[], char *pathVar, int *commandCount, char **env)
 {
 	pid_t pid;
@@ -54,6 +67,13 @@ void runCommand(char *args[], char *pathVar, int *commandCount, char **env)
 	}
 }
 
+/* Main function for the shell.
+ *
+ * argc: The number of command-line arguments.
+ * argv: An array of command-line argument strings.
+ * env: The array of environment variables.
+ * Returns 0 on successful execution.
+ */
 int main(int argc, char **argv, char **env)
 {
 	char userInput[MAX_INPUT_SIZE];

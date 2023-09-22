@@ -8,6 +8,12 @@
 #define MAX_INPUT_SIZE 1024
 #define MAX_ARG_SIZE 64
 
+/* Get the value of an environment variable.
+ *
+ * envVarName: The name of the environment variable to retrieve.
+ * env: The array of environment variables.
+ * Returns the value of the environment variable, or NULL if not found.
+ */
 char *getEnvVar(char *envVarName, char **env)
 {
 	int i = 0;
@@ -25,6 +31,12 @@ char *getEnvVar(char *envVarName, char **env)
 	return (NULL);
 }
 
+/* Find the executable path for a given command.
+ *
+ * command: The command to search for.
+ * exePath: A buffer to store the executable path.
+ * pathVar: The name of the PATH environment variable.
+ */
 void findExecutable(char *command, char *exePath, char *pathVar)
 {
 	char *path = getenv(pathVar);
@@ -51,6 +63,10 @@ void findExecutable(char *command, char *exePath, char *pathVar)
 	exePath[0] = '\0';
 }
 
+/* Handle special characters in a command argument.
+ *
+ * arg: The argument string to process.
+ */
 void handleSpecialChars(char *arg)
 {
 	int len = strlen(arg);
@@ -68,6 +84,11 @@ void handleSpecialChars(char *arg)
 	}
 }
 
+/* Free memory allocated for command arguments.
+ *
+ * args: An array of command arguments.
+ * argCount: The number of arguments in the array.
+ */
 void freeArgs(char *args[], int argCount)
 {
 	int j;
