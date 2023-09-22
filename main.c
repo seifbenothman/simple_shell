@@ -45,15 +45,15 @@ void findExecutable(char *command, char *exePath, char *pathVar) {
 }
 
 void handleSpecialChars(char *arg) {
-	int len = strlen(arg);
-	int k;
+	int lenth = strlen(arg);
+	int F;
 
-	for (k = 0; k < len; k++) {
-		if (strchr("\"'`\\*&#", arg[k])) {
-			memmove(arg + k + 1, arg + k, len - k + 1);
-			arg[k] = '\\';
-			len++;
-			k++;
+	for (F = 0; F < lenth; F++) {
+		if (strchr("\"'`\\*&#", arg[F])) {
+			memmove(arg + F + 1, arg + F, lenth - F + 1);
+			arg[F] = '\\';
+			lenth++;
+			F++;
 		}
 	}
 }
