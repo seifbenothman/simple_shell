@@ -3,11 +3,14 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <signal.h>
+#include "shell.h"
 
 #define MAX_INPUT_SIZE 1024
 #define MAX_ARG_SIZE 64
 
-char *getEnvVar(char *envVarName, shell_data_t *shell_data) {
+
+char *getEnvVar(const char *envVarName, shell_data_t *shell_data) {
 	int i = 0;
 	char *key;
 
@@ -21,7 +24,7 @@ char *getEnvVar(char *envVarName, shell_data_t *shell_data) {
 	return NULL;
 }
 
-void findExecutable(char *command, char *exePath, shell_data_t *shell_data) {
+void findExecutable(const char *command, char *exePath, shell_data_t *shell_data) {
 	char *path = getEnvVar("PATH", shell_data);
 	char *token;
 
