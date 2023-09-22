@@ -1,86 +1,57 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
-#include <sys/types.h>
+#include <string.h>
 #include <sys/wait.h>
-#include <signal.h>
-#include "shell.h"
 
+#define MAX_INPUT_SIZE 1024
+#define MAX_ARG_SIZE 64
 
-/**
- * free_shell_data - Free memory allocated for shell data structure
- *
- * @shell_data: Shell data structure
- * Return: No return value
- */
-void free_shell_data(shell_data_t *shell_data)
-{
-	unsigned int i;
+char *getEnvVar(char *envVarName, shell_data_t *shell_data) {
+	int i = 0;
+	char *key;
 
-	for (i = 0; shell_data->environment[i]; i++)
-	{
-		free(shell_data->environment[i]);
+	while (shell_data->environment[i]) {
+		key = strtok(shell_data->environment[i], "=");
+		if (strcmp(envVarName, key) == 0) {
+			return strtok(NULL, "\n");
+		}
+		i++;
 	}
-
-	free(shell_data->environment);
-	free(shell_data->process_id);
+	return NULL;
 }
 
-/**
- * initialize_shell_data - Initialize shell data structure
- *
- * @shell_data: Shell data structure
- * @argv: Argument vector
- * Return: No return value
- */
-void initialize_shell_data(shell_data_t *shell_data, char **argv)
-{
-	unsigned int i;
+void findExecutable(char *command, char *exePath, shell_data_t *shell_data) {
+	char *path = getEnvVar("PATH", shell_data);
+	char *token;
 
-	shell_data->argv = argv;
-	shell_data->input_buffer = NULL;
-	shell_data->args = NULL;
-	shell_data->exit_status = 0;
-	shell_data->command_count = 1;
+	token = strtok(path, ":");
 
-	for (i = 0; environ[i]; i++)
-	{
-/* Calculate the number of environment variables */
+	while (token != NULL) {
+		strcpy(exePath, token);
+		strcat(exePath, "/");
+		strcat(exePath, command);
+
+		if (access(exePath, X_OK) == 0) {
+			return;
+		}
+
+		token = strtok(NULL, ":");
 	}
 
-	shell_data->environment = malloc(sizeof(char *) * (i + 1));
-
-	for (i = 0; environ[i]; i++)
-	{
-		shell_data->environment[i] = my_strdup(environ[i]);
-	}
-
-	shell_data->environment[i] = NULL;
-	shell_data->process_id = convert_to_string(getpid());
+	exePath[0] = '\0';
 }
 
-/**
- * main - Entry point for the custom shell
- *
- * @argc: Argument count
- * @argv: Argument vector
- *
- * Return: 0 on success.
- */
+void handleSpecialChars(char *arg) {
+	int len = strlen(arg);
+	int k;
 
-int main(int argc, char **argv)
-{
-	shell_data_t shell_data;
-	(void)argc;
-
-	signal(SIGINT, handle_sigint);
-	initialize_shell_data(&shell_data, argv);
-	shell_loop(&shell_data);
-	free_shell_data(&shell_data);
-
-	if (shell_data.exit_status < 0)
-		return (255);
-
-	return (shell_data.exit_status);
+	for (k = 0; k < len; k++) {
+		if (strchr("\"'`\\*&#", arg[k])) {
+			memmove(arg + k + 1, arg + k, len - k + 1);
+			arg[k] = '\\';
+			len++;
+			k++;
+		}
+	}
 }
