@@ -122,6 +122,9 @@ int main(int argc, char **argv, char **env) {
 	getline(&userInput, &inputSize, stdin);
 	while (userInput) {
 
+		if (strcmp(userInput, "exit\n") == 0)
+			break;
+
 		if (userInput[0] == '\n') {
 			userInput[0] = '\0';
 		}
