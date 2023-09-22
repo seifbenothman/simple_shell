@@ -18,7 +18,7 @@ char *getEnvVar(char *envVarName, char **env) {
 		}
 		i++;
 	}
-	return NULL;
+	return (NULL);
 }
 
 void findExecutable(char *command, char *exePath, char *pathVar) {
@@ -108,7 +108,7 @@ void executeCommand(char *inputCmd, char *pathVar, int *commandCount) {
 	}
 }
 
-int main() {
+int main(void) {
 	char userInput[MAX_INPUT_SIZE];
 	int commandCount = 1;
 
@@ -128,5 +128,5 @@ int main() {
 		commandCount++;
 	}
 
-	return 0;
+	return (0);
 }
